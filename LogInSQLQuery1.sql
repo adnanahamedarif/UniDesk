@@ -1,0 +1,11 @@
+﻿CREATE TABLE users (
+    student_id VARCHAR(100) NOT NULL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    current_semester VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    password VARCHAR(100) NOT NULL,
+    created_at DATETIME2 DEFAULT CURRENT_TIMESTAMP
+);
+
+
+SELECT * FROM users;

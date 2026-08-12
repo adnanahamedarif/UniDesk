@@ -36,7 +36,9 @@
     <StartupObject>UniDesk.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
+    <Reference Include="System">
+      <HintPath>..\..\..\..\..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.dll</HintPath>
+    </Reference>
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -49,6 +51,30 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AddCourse.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AddCourse.Designer.cs">
+      <DependentUpon>AddCourse.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CGPA.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CGPA.Designer.cs">
+      <DependentUpon>CGPA.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Course.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Course.Designer.cs">
+      <DependentUpon>Course.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ToDoList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ToDoList.Designer.cs">
+      <DependentUpon>ToDoList.cs</DependentUpon>
+    </Compile>
     <Compile Include="login.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -75,12 +101,18 @@
     <Compile Include="SignUp.Designer.cs">
       <DependentUpon>SignUp.cs</DependentUpon>
     </Compile>
-    <Compile Include="ToDoList.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ToDoList.Designer.cs">
+    <EmbeddedResource Include="AddCourse.resx">
+      <DependentUpon>AddCourse.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CGPA.resx">
+      <DependentUpon>CGPA.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Course.resx">
+      <DependentUpon>Course.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ToDoList.resx">
       <DependentUpon>ToDoList.cs</DependentUpon>
-    </Compile>
+    </EmbeddedResource>
     <EmbeddedResource Include="login.resx">
       <DependentUpon>login.cs</DependentUpon>
     </EmbeddedResource>
@@ -98,9 +130,6 @@
     </Compile>
     <EmbeddedResource Include="SignUp.resx">
       <DependentUpon>SignUp.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ToDoList.resx">
-      <DependentUpon>ToDoList.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

@@ -31,16 +31,16 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ToDoList));
             this.panelContainer = new System.Windows.Forms.Panel();
             this.label2 = new System.Windows.Forms.Label();
+            this.panelCompletedTasks = new System.Windows.Forms.Panel();
             this.lblCompletedTasks = new System.Windows.Forms.Label();
             this.lblCompletedLabel = new System.Windows.Forms.Label();
-            this.panelCompletedTasks = new System.Windows.Forms.Panel();
-            this.lblPendingTasks = new System.Windows.Forms.Label();
-            this.lblPendingLabel = new System.Windows.Forms.Label();
             this.searchTextBox = new System.Windows.Forms.TextBox();
             this.panelPendingTasks = new System.Windows.Forms.Panel();
+            this.lblPendingTasks = new System.Windows.Forms.Label();
+            this.lblPendingLabel = new System.Windows.Forms.Label();
+            this.panelTotalTasks = new System.Windows.Forms.Panel();
             this.lblTotalTasks = new System.Windows.Forms.Label();
             this.lblTotalLabel = new System.Windows.Forms.Label();
-            this.panelTotalTasks = new System.Windows.Forms.Panel();
             this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
             this.button2 = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
@@ -59,7 +59,7 @@
             // panelContainer
             // 
             this.panelContainer.AutoSize = true;
-            this.panelContainer.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("panelContainer.BackgroundImage")));
+            this.panelContainer.BackColor = System.Drawing.Color.Transparent;
             this.panelContainer.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panelContainer.Controls.Add(this.label2);
             this.panelContainer.Controls.Add(this.panelCompletedTasks);
@@ -88,6 +88,16 @@
             this.label2.TabIndex = 23;
             this.label2.Text = "Search Task:";
             // 
+            // panelCompletedTasks
+            // 
+            this.panelCompletedTasks.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(204)))), ((int)(((byte)(113)))));
+            this.panelCompletedTasks.Controls.Add(this.lblCompletedTasks);
+            this.panelCompletedTasks.Controls.Add(this.lblCompletedLabel);
+            this.panelCompletedTasks.Location = new System.Drawing.Point(462, 22);
+            this.panelCompletedTasks.Name = "panelCompletedTasks";
+            this.panelCompletedTasks.Size = new System.Drawing.Size(166, 80);
+            this.panelCompletedTasks.TabIndex = 22;
+            // 
             // lblCompletedTasks
             // 
             this.lblCompletedTasks.AutoSize = true;
@@ -110,15 +120,24 @@
             this.lblCompletedLabel.TabIndex = 0;
             this.lblCompletedLabel.Text = "Completed Tasks";
             // 
-            // panelCompletedTasks
+            // searchTextBox
             // 
-            this.panelCompletedTasks.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(204)))), ((int)(((byte)(113)))));
-            this.panelCompletedTasks.Controls.Add(this.lblCompletedTasks);
-            this.panelCompletedTasks.Controls.Add(this.lblCompletedLabel);
-            this.panelCompletedTasks.Location = new System.Drawing.Point(462, 22);
-            this.panelCompletedTasks.Name = "panelCompletedTasks";
-            this.panelCompletedTasks.Size = new System.Drawing.Size(166, 80);
-            this.panelCompletedTasks.TabIndex = 22;
+            this.searchTextBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.searchTextBox.Font = new System.Drawing.Font("Microsoft YaHei", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.searchTextBox.Location = new System.Drawing.Point(127, 249);
+            this.searchTextBox.Name = "searchTextBox";
+            this.searchTextBox.Size = new System.Drawing.Size(182, 29);
+            this.searchTextBox.TabIndex = 24;
+            // 
+            // panelPendingTasks
+            // 
+            this.panelPendingTasks.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(128)))), ((int)(((byte)(255)))));
+            this.panelPendingTasks.Controls.Add(this.lblPendingTasks);
+            this.panelPendingTasks.Controls.Add(this.lblPendingLabel);
+            this.panelPendingTasks.Location = new System.Drawing.Point(246, 22);
+            this.panelPendingTasks.Name = "panelPendingTasks";
+            this.panelPendingTasks.Size = new System.Drawing.Size(174, 80);
+            this.panelPendingTasks.TabIndex = 21;
             // 
             // lblPendingTasks
             // 
@@ -142,24 +161,15 @@
             this.lblPendingLabel.TabIndex = 0;
             this.lblPendingLabel.Text = "Pending Tasks";
             // 
-            // searchTextBox
+            // panelTotalTasks
             // 
-            this.searchTextBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.searchTextBox.Font = new System.Drawing.Font("Microsoft YaHei", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.searchTextBox.Location = new System.Drawing.Point(127, 249);
-            this.searchTextBox.Name = "searchTextBox";
-            this.searchTextBox.Size = new System.Drawing.Size(182, 29);
-            this.searchTextBox.TabIndex = 24;
-            // 
-            // panelPendingTasks
-            // 
-            this.panelPendingTasks.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(128)))), ((int)(((byte)(255)))));
-            this.panelPendingTasks.Controls.Add(this.lblPendingTasks);
-            this.panelPendingTasks.Controls.Add(this.lblPendingLabel);
-            this.panelPendingTasks.Location = new System.Drawing.Point(246, 22);
-            this.panelPendingTasks.Name = "panelPendingTasks";
-            this.panelPendingTasks.Size = new System.Drawing.Size(174, 80);
-            this.panelPendingTasks.TabIndex = 21;
+            this.panelTotalTasks.BackColor = System.Drawing.SystemColors.Highlight;
+            this.panelTotalTasks.Controls.Add(this.lblTotalTasks);
+            this.panelTotalTasks.Controls.Add(this.lblTotalLabel);
+            this.panelTotalTasks.Location = new System.Drawing.Point(30, 22);
+            this.panelTotalTasks.Name = "panelTotalTasks";
+            this.panelTotalTasks.Size = new System.Drawing.Size(161, 80);
+            this.panelTotalTasks.TabIndex = 20;
             // 
             // lblTotalTasks
             // 
@@ -182,16 +192,6 @@
             this.lblTotalLabel.Size = new System.Drawing.Size(86, 21);
             this.lblTotalLabel.TabIndex = 0;
             this.lblTotalLabel.Text = "Total Tasks";
-            // 
-            // panelTotalTasks
-            // 
-            this.panelTotalTasks.BackColor = System.Drawing.SystemColors.Highlight;
-            this.panelTotalTasks.Controls.Add(this.lblTotalTasks);
-            this.panelTotalTasks.Controls.Add(this.lblTotalLabel);
-            this.panelTotalTasks.Location = new System.Drawing.Point(30, 22);
-            this.panelTotalTasks.Name = "panelTotalTasks";
-            this.panelTotalTasks.Size = new System.Drawing.Size(161, 80);
-            this.panelTotalTasks.TabIndex = 20;
             // 
             // dateTimePicker1
             // 
@@ -242,6 +242,7 @@
             // 
             // dataGridView1
             // 
+            this.dataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.GridColor = System.Drawing.SystemColors.ControlDarkDark;
             this.dataGridView1.Location = new System.Drawing.Point(30, 300);
@@ -284,9 +285,10 @@
             this.BackColor = System.Drawing.Color.LightSkyBlue;
             this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.ClientSize = new System.Drawing.Size(1167, 830);
+            this.ClientSize = new System.Drawing.Size(1160, 786);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.panelContainer);
+            this.DoubleBuffered = true;
             this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Name = "ToDoList";
             this.Text = "ToDo List Manager";

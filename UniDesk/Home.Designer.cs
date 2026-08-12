@@ -37,13 +37,14 @@ namespace UniDesk
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.button2 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
-            this.button4 = new System.Windows.Forms.Button();
+            this.cgpa = new System.Windows.Forms.Button();
             this.button5 = new System.Windows.Forms.Button();
             this.button6 = new System.Windows.Forms.Button();
             this.button7 = new System.Windows.Forms.Button();
             this.button8 = new System.Windows.Forms.Button();
             this.button9 = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
+            this.panel_Main = new System.Windows.Forms.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -96,15 +97,16 @@ namespace UniDesk
             this.button3.Text = "Assignment Tracker";
             this.button3.UseVisualStyleBackColor = true;
             // 
-            // button4
+            // cgpa
             // 
-            this.button4.Font = new System.Drawing.Font("Century Gothic", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button4.Location = new System.Drawing.Point(12, 417);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(237, 42);
-            this.button4.TabIndex = 7;
-            this.button4.Text = "CGPA Calculator";
-            this.button4.UseVisualStyleBackColor = true;
+            this.cgpa.Font = new System.Drawing.Font("Century Gothic", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cgpa.Location = new System.Drawing.Point(12, 417);
+            this.cgpa.Name = "cgpa";
+            this.cgpa.Size = new System.Drawing.Size(237, 42);
+            this.cgpa.TabIndex = 7;
+            this.cgpa.Text = "CGPA Calculator";
+            this.cgpa.UseVisualStyleBackColor = true;
+            this.cgpa.Click += new System.EventHandler(this.button4_Click);
             // 
             // button5
             // 
@@ -146,6 +148,7 @@ namespace UniDesk
             this.button8.TabIndex = 9;
             this.button8.Text = "Pomodoro Timer";
             this.button8.UseVisualStyleBackColor = true;
+            this.button8.Click += new System.EventHandler(this.button8_Click);
             // 
             // button9
             // 
@@ -170,16 +173,27 @@ namespace UniDesk
             this.label1.Text = "UniDesk";
             this.label1.Click += new System.EventHandler(this.label1_Click);
             // 
+            // panel_Main
+            // 
+            this.panel_Main.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("panel_Main.BackgroundImage")));
+            this.panel_Main.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.panel_Main.Location = new System.Drawing.Point(266, 0);
+            this.panel_Main.Name = "panel_Main";
+            this.panel_Main.Size = new System.Drawing.Size(1176, 825);
+            this.panel_Main.TabIndex = 12;
+            this.panel_Main.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
+            // 
             // Home
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1442, 825);
+            this.Controls.Add(this.panel_Main);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.button7);
             this.Controls.Add(this.button8);
             this.Controls.Add(this.button9);
-            this.Controls.Add(this.button4);
+            this.Controls.Add(this.cgpa);
             this.Controls.Add(this.button5);
             this.Controls.Add(this.button6);
             this.Controls.Add(this.button3);
@@ -187,7 +201,9 @@ namespace UniDesk
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.splitter1);
+            this.DoubleBuffered = true;
             this.Name = "Home";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Home";
             this.Load += new System.EventHandler(this.Home_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
@@ -204,13 +220,14 @@ namespace UniDesk
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button3;
-        private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.Button cgpa;
         private System.Windows.Forms.Button button5;
         private System.Windows.Forms.Button button6;
         private System.Windows.Forms.Button button7;
         private System.Windows.Forms.Button button8;
         private System.Windows.Forms.Button button9;
         private System.Windows.Forms.Label label1;
+        private Panel panel_Main;
     }
 }
 

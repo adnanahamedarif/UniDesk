@@ -1,70 +1,144 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Reflection;
 using System.Windows.Forms;
 
 namespace UniDesk
 {
     public partial class Home : Form
     {
-        // কন্টেন্ট লোডের জন্য Panel
-        private Panel contentPanel;
+        private readonly string currentStudentId = string.Empty;
 
+        // Read-only property
+        public string CurrentStudentId
+        {
+            get { return currentStudentId; }
+        }
+
+        // Kept for the WinForms Designer
         public Home()
         {
             InitializeComponent();
-            InitializeContentPanel();
 
+            // Prevent panel_Main flickering
+            typeof(Panel).InvokeMember(
+                "DoubleBuffered",
+                BindingFlags.SetProperty |
+                BindingFlags.Instance |
+                BindingFlags.NonPublic,
+                null,
+                panel_Main,
+                new object[] { true });
         }
 
-        private void InitializeContentPanel()
+        // Use this constructor after successful login
+        public Home(string studentId) : this()
         {
-            // contentPanel তৈরি করুন - ডান পাশে নির্দিষ্ট মাপে থাকবে
-            contentPanel = new Panel
+            if (string.IsNullOrWhiteSpace(studentId))
             {
-                BackColor = Color.White,
-                Location = new Point(275, 12), // সাইডবারের পর থেকে শুরু
-                Size = new Size(1145, 790)     // আপনার ফর্মের সাইজ অনুযায়ী অ্যাডজাস্ট করে নিন
-            };
+                throw new ArgumentException(
+                    "Student ID is required.",
+                    nameof(studentId));
+            }
 
-            // যাতে ফর্ম বড়-ছোট করলে প্যানেলও এডজাস্ট হয়
-            contentPanel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-
-            // Home ফর্মে Panel যোগ করুন
-            this.Controls.Add(contentPanel);
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
+            currentStudentId = studentId.Trim();
         }
 
         private void Home_Load(object sender, EventArgs e)
         {
+        }
 
+        private void label1_Click(object sender, EventArgs e)
+        {
+        }
+
+        private void panel1_Paint(object sender, PaintEventArgs e)
+        {
         }
 
         private void button7_Click(object sender, EventArgs e)
         {
-            LoadFormInPanel(new ToDoList());
+            panel_Main.SuspendLayout();
+
+            try
+            {
+                panel_Main.Controls.Clear();
+
+                ToDoList toDoList = new ToDoList
+                {
+                    TopLevel = false,
+                    FormBorderStyle = FormBorderStyle.None,
+                    Dock = DockStyle.Fill
+                };
+
+                panel_Main.Controls.Add(toDoList);
+                toDoList.Show();
+                toDoList.BringToFront();
+            }
+            finally
+            {
+                panel_Main.ResumeLayout();
+            }
         }
 
-        private void LoadFormInPanel(Form form)
+        private void button4_Click(object sender, EventArgs e)
         {
-            // পূর্ববর্তী কন্টেন্ট清除 করুন
-            contentPanel.Controls.Clear();
+            if (string.IsNullOrWhiteSpace(currentStudentId))
+            {
+                MessageBox.Show(
+                    "Student ID is missing. Please log in again.",
+                    "Student ID error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
 
-            // ফর্মটি Panel-এ লোড করুন
-            form.TopLevel = false;
-            form.FormBorderStyle = FormBorderStyle.None;
-            form.Dock = DockStyle.Fill;
-            contentPanel.Controls.Add(form);
-            form.Show();
+                return;
+            }
+
+            panel_Main.SuspendLayout();
+
+            try
+            {
+                panel_Main.Controls.Clear();
+
+                CGPA cgpaForm = new CGPA(currentStudentId)
+                {
+                    TopLevel = false,
+                    FormBorderStyle = FormBorderStyle.None,
+                    Dock = DockStyle.Fill
+                };
+
+                panel_Main.Controls.Add(cgpaForm);
+                cgpaForm.Show();
+                cgpaForm.BringToFront();
+            }
+            finally
+            {
+                panel_Main.ResumeLayout();
+            }
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+            panel_Main.SuspendLayout();
+
+            try
+            {
+                panel_Main.Controls.Clear();
+
+                pomo pomoForm = new pomo
+                {
+                    TopLevel = false,
+                    FormBorderStyle = FormBorderStyle.None,
+                    Dock = DockStyle.Fill
+                };
+
+                panel_Main.Controls.Add(pomoForm);
+                pomoForm.Show();
+                pomoForm.BringToFront();
+            }
+            finally
+            {
+                panel_Main.ResumeLayout();
+            }
         }
     }
 }

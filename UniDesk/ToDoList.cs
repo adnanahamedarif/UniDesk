@@ -21,7 +21,7 @@ TrustServerCertificate=True;";
             InitializeComponent();
 
             // Wire up the button click events
-            this.AutoScroll= true;
+            this.AutoScroll = true;
             this.addbtn.Click += new EventHandler(this.addbtn_Click);
             this.button1.Click += new EventHandler(this.button1_Click);
             this.button2.Click += new EventHandler(this.button2_Click);
@@ -438,7 +438,7 @@ TrustServerCertificate=True;";
             // Not used
         }
 
-       
+
 
         private void ToDoList_Resize(object sender, EventArgs e)
         {
