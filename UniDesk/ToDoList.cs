@@ -14,144 +14,39 @@ AttachDbFilename=C:\Users\USER\OneDrive\Documents\ToDoList.mdf;
 Integrated Security=True;
 TrustServerCertificate=True;";
 
-        private DataTable originalTable; // To store unfiltered data
+        private DataTable originalTable; 
 
         public ToDoList()
         {
             InitializeComponent();
 
-            // Wire up the button click events
             this.AutoScroll = true;
             this.addbtn.Click += new EventHandler(this.addbtn_Click);
             this.button1.Click += new EventHandler(this.button1_Click);
             this.button2.Click += new EventHandler(this.button2_Click);
             this.searchTextBox.TextChanged += new EventHandler(this.searchTextBox_TextChanged);
 
-            // Setup DataGridView
-            SetupDataGridView();
+            
         }
 
         private void ToDoList_Load(object sender, EventArgs e)
         {
             LoadTasks();
             UpdateDashboard();
-            CenterContent();
+
+
         }
 
         private void dateTimePicker1_ValueChanged(object sender, EventArgs e)
         {
-            // Not currently used
+
         }
 
-        private string GetConnectionString()
-        {
-            return connectionString;
-        }
 
-        private void SetupDataGridView()
-        {
-            dataGridView1.AutoGenerateColumns = false;
-            dataGridView1.AllowUserToAddRows = false;
-            dataGridView1.AllowUserToDeleteRows = false;
-            dataGridView1.ReadOnly = true;
-            dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dataGridView1.MultiSelect = false;
-            dataGridView1.RowHeadersVisible = false;
-            dataGridView1.BackgroundColor = Color.White;
-            dataGridView1.BorderStyle = BorderStyle.None;
-            dataGridView1.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
-            dataGridView1.GridColor = Color.FromArgb(230, 230, 230);
-            dataGridView1.DefaultCellStyle.Font = new Font("Segoe UI", 10);
-            dataGridView1.DefaultCellStyle.ForeColor = Color.FromArgb(64, 64, 64);
-            dataGridView1.DefaultCellStyle.SelectionBackColor = Color.FromArgb(52, 152, 219);
-            dataGridView1.DefaultCellStyle.SelectionForeColor = Color.White;
-            dataGridView1.RowTemplate.Height = 35;
-            dataGridView1.EnableHeadersVisualStyles = false;
-            dataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(52, 73, 94);
-            dataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
-            dataGridView1.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 11, FontStyle.Bold);
-            dataGridView1.ColumnHeadersHeight = 40;
-            dataGridView1.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+        
 
-            // Clear existing columns
-            dataGridView1.Columns.Clear();
 
-            // Add columns
-            DataGridViewTextBoxColumn serialColumn = new DataGridViewTextBoxColumn();
-            serialColumn.Name = "Serial";
-            serialColumn.HeaderText = "ID";
-            serialColumn.DataPropertyName = "Serial";
-            serialColumn.Width = 60;
-            serialColumn.Visible = false;
-            dataGridView1.Columns.Add(serialColumn);
 
-            DataGridViewTextBoxColumn taskColumn = new DataGridViewTextBoxColumn();
-            taskColumn.Name = "Task";
-            taskColumn.HeaderText = "Task";
-            taskColumn.DataPropertyName = "Task";
-            taskColumn.Width = 350;
-            dataGridView1.Columns.Add(taskColumn);
-
-            DataGridViewTextBoxColumn taskDateColumn = new DataGridViewTextBoxColumn();
-            taskDateColumn.Name = "TaskDate";
-            taskDateColumn.HeaderText = "Due Date";
-            taskDateColumn.DataPropertyName = "TaskDate";
-            taskDateColumn.Width = 140;
-            taskDateColumn.DefaultCellStyle.Format = "dd/MM/yyyy";
-            dataGridView1.Columns.Add(taskDateColumn);
-
-            DataGridViewTextBoxColumn statusColumn = new DataGridViewTextBoxColumn();
-            statusColumn.Name = "Status";
-            statusColumn.HeaderText = "Status";
-            statusColumn.DataPropertyName = "Status";
-            statusColumn.Width = 120;
-            dataGridView1.Columns.Add(statusColumn);
-
-            // Handle cell formatting for colors
-            dataGridView1.CellFormatting += new DataGridViewCellFormattingEventHandler(dataGridView1_CellFormatting);
-
-            // Handle row painting for overdue dates
-            dataGridView1.RowPrePaint += new DataGridViewRowPrePaintEventHandler(dataGridView1_RowPrePaint);
-        }
-
-        private void dataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
-        {
-            // Format Status column with color
-            if (e.ColumnIndex == dataGridView1.Columns["Status"].Index && e.RowIndex >= 0)
-            {
-                string status = e.Value?.ToString();
-                if (status == "Pending")
-                {
-                    e.CellStyle.BackColor = Color.FromArgb(255, 224, 178);
-                    e.CellStyle.ForeColor = Color.FromArgb(255, 140, 0);
-                    e.CellStyle.Font = new Font("Segoe UI", 10, FontStyle.Bold);
-                }
-                else if (status == "Completed")
-                {
-                    e.CellStyle.BackColor = Color.FromArgb(200, 230, 200);
-                    e.CellStyle.ForeColor = Color.FromArgb(0, 128, 0);
-                    e.CellStyle.Font = new Font("Segoe UI", 10, FontStyle.Bold);
-                }
-            }
-        }
-
-        private void dataGridView1_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)
-        {
-            if (e.RowIndex < 0 || e.RowIndex >= dataGridView1.Rows.Count)
-                return;
-
-            DataGridViewRow row = dataGridView1.Rows[e.RowIndex];
-            string status = row.Cells["Status"].Value?.ToString();
-            DateTime taskDate = Convert.ToDateTime(row.Cells["TaskDate"].Value);
-
-            // Highlight overdue tasks (date < today and status is pending)
-            if (taskDate.Date < DateTime.Today.Date && status == "Pending")
-            {
-                row.DefaultCellStyle.BackColor = Color.FromArgb(255, 200, 200);
-                row.DefaultCellStyle.ForeColor = Color.FromArgb(220, 0, 0);
-                row.DefaultCellStyle.Font = new Font("Segoe UI", 10, FontStyle.Bold);
-            }
-        }
 
         private void LoadTasks()
         {
@@ -165,8 +60,11 @@ TrustServerCertificate=True;";
                     adapter.Fill(originalTable);
 
                     dataGridView1.DataSource = originalTable;
+                    if (dataGridView1.Columns["Serial"] != null)
+                    {
+                        dataGridView1.Columns["Serial"].Visible = false;
+                    }
 
-                    // Check for duplicate tasks
                     CheckForDuplicates();
 
                     UpdateDashboard();
@@ -189,11 +87,6 @@ TrustServerCertificate=True;";
                     .Select(g => g.Key)
                     .ToList();
 
-                if (duplicateTasks.Any())
-                {
-                    // You can highlight duplicates or show a warning
-                    // For now, we'll just keep track of them
-                }
             }
         }
 
@@ -205,21 +98,18 @@ TrustServerCertificate=True;";
                 {
                     conn.Open();
 
-                    // Get total tasks
                     using (SqlCommand cmd = new SqlCommand("SELECT COUNT(*) FROM ToDoList", conn))
                     {
                         int total = Convert.ToInt32(cmd.ExecuteScalar());
                         lblTotalTasks.Text = total.ToString();
                     }
 
-                    // Get pending tasks
                     using (SqlCommand cmd = new SqlCommand("SELECT COUNT(*) FROM ToDoList WHERE Status = 'Pending'", conn))
                     {
                         int pending = Convert.ToInt32(cmd.ExecuteScalar());
                         lblPendingTasks.Text = pending.ToString();
                     }
 
-                    // Get completed tasks
                     using (SqlCommand cmd = new SqlCommand("SELECT COUNT(*) FROM ToDoList WHERE Status = 'Completed'", conn))
                     {
                         int completed = Convert.ToInt32(cmd.ExecuteScalar());
@@ -229,7 +119,6 @@ TrustServerCertificate=True;";
             }
             catch (Exception ex)
             {
-                // Handle error silently
             }
         }
 
@@ -271,7 +160,6 @@ TrustServerCertificate=True;";
                 return;
             }
 
-            // Check for duplicate task
             try
             {
                 using (SqlConnection conn = new SqlConnection(connectionString))
@@ -428,38 +316,11 @@ TrustServerCertificate=True;";
             }
         }
 
-        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        
+
+        private void dataGridView1_CellContentClick_1(object sender, DataGridViewCellEventArgs e)
         {
-            // Not used
-        }
 
-        private void lblTotalLabel_Click(object sender, EventArgs e)
-        {
-            // Not used
-        }
-
-
-
-        private void ToDoList_Resize(object sender, EventArgs e)
-        {
-            CenterContent();
-        }
-
-        private void CenterContent()
-        {
-            if (panelContainer != null)
-            {
-                // ডকিং বন্ধ করতে হবে যেন Location কাজ করে
-                panelContainer.Dock = DockStyle.None;
-
-                // নিখুঁত মাঝখানে আনার হিসাব
-                int x = (this.ClientSize.Width - panelContainer.Width) / 2;
-                int y = panelContainer.Location.Y;
-
-                if (x < 0) x = 0; // স্ক্রিন ছোট হলে যেন মাইনাস না হয়ে যায়
-
-                panelContainer.Location = new Point(x, y);
-            }
         }
     }
 }

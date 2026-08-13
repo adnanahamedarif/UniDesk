@@ -94,7 +94,7 @@ namespace UniDesk
             }
 
             const string query = @"
-        SELECT COUNT(1)
+        SELECT name
         FROM dbo.users
         WHERE student_id = @student_id
           AND password = @password;";
@@ -106,20 +106,32 @@ namespace UniDesk
 
                 using (SqlCommand cmd = new SqlCommand(query, connect))
                 {
-                    cmd.Parameters.Add("@student_id", SqlDbType.VarChar, 50)
-                        .Value = studentId;
+                    cmd.Parameters.Add(
+                        "@student_id",
+                        SqlDbType.VarChar,
+                        50
+                    ).Value = studentId;
 
-                    cmd.Parameters.Add("@password", SqlDbType.VarChar, 255)
-                        .Value = password;
+                    cmd.Parameters.Add(
+                        "@password",
+                        SqlDbType.VarChar,
+                        255
+                    ).Value = password;
 
-                    int userExists = Convert.ToInt32(cmd.ExecuteScalar());
+                    object result = cmd.ExecuteScalar();
 
-                    if (userExists == 1)
+                    if (result != null && result != DBNull.Value)
                     {
-                        // Pass the logged-in student ID to Home
-                        Home homeForm = new Home(studentId);
+                        string studentName = result.ToString();
 
-                        homeForm.FormClosed += (s, args) => Close();
+                        Home homeForm = new Home(
+                            studentId,
+                            studentName
+                        );
+
+                        homeForm.FormClosed +=
+                            (s, args) => Close();
+
                         homeForm.Show();
                         Hide();
                     }
@@ -136,7 +148,8 @@ namespace UniDesk
             catch (Exception ex)
             {
                 MessageBox.Show(
-                    "Error connecting to the database:\n\n" + ex.Message,
+                    "Error connecting to the database:\n\n" +
+                    ex.Message,
                     "Database Error",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);

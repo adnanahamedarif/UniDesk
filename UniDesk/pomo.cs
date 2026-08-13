@@ -14,38 +14,41 @@ namespace UniDesk
         private bool isRunning = false;
         private bool isPaused = false;
         private bool isWorkSession = true;
-        private int sessionCount = 0;
+
+
 
         // Session Durations (in seconds)
         private const int WORK_DURATION = 25 * 60;      // 25 minutes
         private const int SHORT_BREAK = 5 * 60;         // 5 minutes
         private const int LONG_BREAK = 15 * 60;         // 15 minutes
-        private const int LONG_BREAK_INTERVAL = 4;      // After 4 work sessions
 
         // UI Controls - declared but initialized in Designer
         private System.Windows.Forms.Label lblTimer;
-        private System.Windows.Forms.Label lblStatus;
-        private System.Windows.Forms.Label lblSessionCount;
-        private System.Windows.Forms.Button btnStart;
-        private System.Windows.Forms.Button btnPause;
-        private System.Windows.Forms.Button btnReset;
-        private System.Windows.Forms.Button btnStop;
-        private System.Windows.Forms.Button btnSkip;
+        private System.Windows.Forms.Button Start_btn;
+        private System.Windows.Forms.Button Pause_btn;
+        private System.Windows.Forms.Button reset_btn;
         private System.Windows.Forms.ProgressBar progressBar;
-        private System.Windows.Forms.Label lblPhase;
-        private System.Windows.Forms.ComboBox cmbTimerMode;
-        private System.Windows.Forms.CheckBox chkAutoStart;
 
         public pomo()
         {
             InitializeComponent();
             InitializeTimer();
-            ResetTimer();
+            SetSession(SessionType.Work);
+
+        }
+
+
+        private enum SessionType
+        {
+            Work,
+            ShortBreak,
+            LongBreak
         }
 
         private void InitializeTimer()
         {
             timer = new System.Timers.Timer(1000); // 1 second interval
+            timer.SynchronizingObject = this;
             timer.Elapsed += OnTick;
             timer.AutoReset = true;
         }
@@ -57,32 +60,27 @@ namespace UniDesk
                 if (remainingSeconds > 0)
                 {
                     remainingSeconds--;
-                    UpdateUI();
+                    UpdateTimerDisplay();
+                    UpdateProgressBar();
+                }
+                if (remainingSeconds <= 0)
+                {
+                    timer.Stop();
+                    isRunning = false;
+                    isPaused = false;
+
                 }
                 else
                 {
-                    // Session Complete
-                    isRunning = false;
-                    timer.Stop();
-                    OnSessionComplete();
+                    lblTimer.ForeColor = isWorkSession
+                        ? Color.FromArgb(0,0,0)
+                        : Color.FromArgb(46, 204, 113);
                 }
+
             }
         }
 
-        private void UpdateUI()
-        {
-            // Update timer display on UI thread
-            if (lblTimer.InvokeRequired)
-            {
-                lblTimer.Invoke(new Action(() => UpdateTimerDisplay()));
-                progressBar.Invoke(new Action(() => UpdateProgressBar()));
-            }
-            else
-            {
-                UpdateTimerDisplay();
-                UpdateProgressBar();
-            }
-        }
+
 
         private void UpdateTimerDisplay()
         {
@@ -98,10 +96,7 @@ namespace UniDesk
             {
                 lblTimer.ForeColor = Color.Orange;
             }
-            else
-            {
-                lblTimer.ForeColor = isWorkSession ? Color.FromArgb(52, 152, 219) : Color.FromArgb(46, 204, 113);
-            }
+            
         }
 
         private void UpdateProgressBar()
@@ -113,227 +108,219 @@ namespace UniDesk
             }
         }
 
+
+
+
         private void ResetTimer()
         {
             timer.Stop();
+
+            isRunning = false;
+            isPaused = false;
+            remainingSeconds = totalSeconds;
+
+            Start_btn.Enabled = true;
+            Pause_btn.Enabled = false;
+            Pause_btn.Text = "Pause";
+
+            UpdateTimerDisplay();
+            UpdateProgressBar();
+        }
+
+
+        private void SetSession(SessionType sessionType)
+        {
+            timer.Stop();
+
             isRunning = false;
             isPaused = false;
 
-            if (isWorkSession)
+            switch (sessionType)
             {
-                remainingSeconds = WORK_DURATION;
-                totalSeconds = WORK_DURATION;
-                lblPhase.Text = "💪 Work Time";
-                lblPhase.ForeColor = Color.FromArgb(52, 152, 219);
+                case SessionType.Work:
+                    totalSeconds = WORK_DURATION;
+                    break;
+
+                case SessionType.ShortBreak:
+                    totalSeconds = SHORT_BREAK;
+                    break;
+
+                case SessionType.LongBreak:
+                    totalSeconds = LONG_BREAK;
+                    break;
             }
-            else
-            {
-                remainingSeconds = (sessionCount % LONG_BREAK_INTERVAL == 0) ? LONG_BREAK : SHORT_BREAK;
-                totalSeconds = remainingSeconds;
-                lblPhase.Text = sessionCount % LONG_BREAK_INTERVAL == 0 ? "☕ Long Break" : "☕ Short Break";
-                lblPhase.ForeColor = Color.FromArgb(46, 204, 113);
-            }
+
+            remainingSeconds = totalSeconds;
+
+            Start_btn.Enabled = true;
+            Pause_btn.Enabled = false;
+            Pause_btn.Text = "Pause";
 
             UpdateTimerDisplay();
-            progressBar.Value = 0;
-            btnStart.Enabled = true;
-            btnPause.Enabled = false;
-            btnPause.Text = "⏸️ Pause";
-
-            UpdateStatus("Ready");
+            UpdateProgressBar();
         }
 
-        private void OnSessionComplete()
-        {
-            if (isWorkSession)
-            {
-                sessionCount++;
-                UpdateSessionCount();
 
-                // Play notification sound (optional)
-                System.Media.SystemSounds.Beep.Play();
-
-                MessageBox.Show($"Work session completed! 🎉\nYou've completed {sessionCount} session(s).",
-                    "Pomodoro Complete", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                isWorkSession = false;
-
-                if (chkAutoStart.Checked)
-                {
-                    StartTimer();
-                }
-                else
-                {
-                    ResetTimer();
-                    UpdateStatus("Break Time - Click Start to begin");
-                }
-            }
-            else
-            {
-                // Break completed
-                System.Media.SystemSounds.Beep.Play();
-
-                MessageBox.Show("Break time is over! Let's get back to work! 💪",
-                    "Break Complete", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                isWorkSession = true;
-
-                if (chkAutoStart.Checked)
-                {
-                    StartTimer();
-                }
-                else
-                {
-                    ResetTimer();
-                    UpdateStatus("Work Time - Click Start to begin");
-                }
-            }
-        }
-
-        private void UpdateSessionCount()
-        {
-            lblSessionCount.Text = $"Sessions: {sessionCount}";
-        }
-
-        private void UpdateStatus(string status)
-        {
-            if (lblStatus.InvokeRequired)
-            {
-                lblStatus.Invoke(new Action(() => lblStatus.Text = status));
-            }
-            else
-            {
-                lblStatus.Text = status;
-            }
-        }
 
         // Button Click Events
         private void BtnStart_Click(object sender, EventArgs e)
         {
-            StartTimer();
-        }
-
-        private void StartTimer()
-        {
-            if (!isRunning)
+            if (remainingSeconds <= 0)
             {
                 ResetTimer();
-                isRunning = true;
-                isPaused = false;
-                timer.Start();
-                btnStart.Enabled = false;
-                btnPause.Enabled = true;
-                btnPause.Text = "⏸️ Pause";
-                UpdateStatus("Running...");
             }
+
+            isRunning = true;
+            isPaused = false;
+
+            timer.Start();
+
+            Start_btn.Enabled = false;
+            Pause_btn.Enabled = true;
+            Pause_btn.Text = "Pause";
         }
+
+        
 
         private void BtnPause_Click(object sender, EventArgs e)
         {
-            if (isRunning)
+            if (!isRunning)
+                return;
+
+            if (!isPaused)
             {
-                if (isPaused)
-                {
-                    // Resume
-                    isPaused = false;
-                    timer.Start();
-                    btnPause.Text = "⏸️ Pause";
-                    UpdateStatus("Running...");
-                }
-                else
-                {
-                    // Pause
-                    isPaused = true;
-                    timer.Stop();
-                    btnPause.Text = "▶️ Resume";
-                    UpdateStatus("Paused");
-                }
+                isPaused = true;
+                timer.Stop();
+
+                Pause_btn.Text = "Resume";
+                Start_btn.Enabled = false;
             }
+            else
+            {
+                isPaused = false;
+                timer.Start();
+
+                Pause_btn.Text = "Pause";
+                Start_btn.Enabled = false;
+            }
+
         }
+
+
 
         private void BtnReset_Click(object sender, EventArgs e)
         {
             ResetTimer();
-            UpdateStatus("Reset");
-            btnPause.Enabled = false;
-            btnPause.Text = "⏸️ Pause";
+
         }
 
-        private void BtnStop_Click(object sender, EventArgs e)
+        private void ChangeSessionWithConfirmation(SessionType sessionType)
         {
-            timer.Stop();
-            isRunning = false;
-            isPaused = false;
-            btnStart.Enabled = true;
-            btnPause.Enabled = false;
-            btnPause.Text = "⏸️ Pause";
-            UpdateStatus("Stopped");
+            if (isRunning || isPaused)
+            {
+                DialogResult answer = MessageBox.Show(
+                    "Change the current timer mode?",
+                    "Change timer",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question);
 
-            if (isWorkSession)
-            {
-                remainingSeconds = WORK_DURATION;
-                totalSeconds = WORK_DURATION;
+                if (answer != DialogResult.Yes)
+                    return;
             }
-            else
-            {
-                remainingSeconds = (sessionCount % LONG_BREAK_INTERVAL == 0) ? LONG_BREAK : SHORT_BREAK;
-                totalSeconds = remainingSeconds;
-            }
-            UpdateTimerDisplay();
-            progressBar.Value = 0;
+
+            SetSession(sessionType);
         }
 
-        private void BtnSkip_Click(object sender, EventArgs e)
-        {
-            if (MessageBox.Show("Skip current session?", "Confirm Skip",
-                MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-            {
-                timer.Stop();
-                isRunning = false;
-                remainingSeconds = 0;
-                OnSessionComplete();
-            }
-        }
 
-        private void CmbTimerMode_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (!isRunning)
-            {
-                switch (cmbTimerMode.SelectedIndex)
-                {
-                    case 0: // Pomodoro (Default)
-                        isWorkSession = true;
-                        ResetTimer();
-                        break;
-                    case 1: // Short Break
-                        isWorkSession = false;
-                        remainingSeconds = SHORT_BREAK;
-                        totalSeconds = SHORT_BREAK;
-                        ResetTimer();
-                        break;
-                    case 2: // Long Break
-                        isWorkSession = false;
-                        remainingSeconds = LONG_BREAK;
-                        totalSeconds = LONG_BREAK;
-                        ResetTimer();
-                        break;
-                    case 3: // Custom
-                        // You can add custom time input here
-                        break;
-                }
-            }
-        }
 
         private void Form_Load(object sender, EventArgs e)
         {
-            cmbTimerMode.SelectedIndex = 0;
-            UpdateSessionCount();
+            SetSession(SessionType.Work);
+
         }
 
-        private void Form_FormClosing(object sender, FormClosingEventArgs e)
+        private void Form_FormClosing(
+            object sender,
+            FormClosingEventArgs e)
         {
-            timer?.Stop();
-            timer?.Dispose();
+            if (timer != null)
+            {
+                timer.Stop();
+                timer.Elapsed -= OnTick;
+                timer.Dispose();
+            }
+        }
+
+       
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label3_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label8_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label4_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label5_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void panel3_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label7_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void focus_btn_Click(object sender, EventArgs e)
+        {
+            ChangeSessionWithConfirmation(SessionType.Work);
+
+        }
+
+        private void shortBreak_btn_Click(object sender, EventArgs e)
+        {
+            ChangeSessionWithConfirmation(SessionType.ShortBreak);
+
+        }
+
+        private void longBreak_btn_Click(object sender, EventArgs e)
+        {
+            ChangeSessionWithConfirmation(SessionType.LongBreak);
+
+        }
+
+        private void lblTimer_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
         }
     }
+
+
 }

@@ -66,6 +66,7 @@ namespace UniDesk
             this.button1.TabIndex = 1;
             this.button1.Text = "Dashboard";
             this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // pictureBox1
             // 
@@ -175,7 +176,6 @@ namespace UniDesk
             // 
             // panel_Main
             // 
-            this.panel_Main.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("panel_Main.BackgroundImage")));
             this.panel_Main.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.panel_Main.Location = new System.Drawing.Point(266, 0);
             this.panel_Main.Name = "panel_Main";

@@ -51,11 +51,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AddCourse.cs">
+    <Compile Include="Dashboard.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="AddCourse.Designer.cs">
-      <DependentUpon>AddCourse.cs</DependentUpon>
+    <Compile Include="Dashboard.Designer.cs">
+      <DependentUpon>Dashboard.cs</DependentUpon>
     </Compile>
     <Compile Include="CGPA.cs">
       <SubType>Form</SubType>
@@ -101,14 +101,17 @@
     <Compile Include="SignUp.Designer.cs">
       <DependentUpon>SignUp.cs</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="AddCourse.resx">
-      <DependentUpon>AddCourse.cs</DependentUpon>
+    <EmbeddedResource Include="Dashboard.resx">
+      <DependentUpon>Dashboard.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="CGPA.resx">
       <DependentUpon>CGPA.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Course.resx">
       <DependentUpon>Course.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="pomo.resx">
+      <DependentUpon>pomo.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ToDoList.resx">
       <DependentUpon>ToDoList.cs</DependentUpon>
