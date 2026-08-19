@@ -51,6 +51,30 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AddClass.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AddClass.Designer.cs">
+      <DependentUpon>AddClass.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ClassMaterials.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ClassMaterials.Designer.cs">
+      <DependentUpon>ClassMaterials.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ClassRoutine.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ClassRoutine.Designer.cs">
+      <DependentUpon>ClassRoutine.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CourseMaterialsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CourseMaterialsForm.Designer.cs">
+      <DependentUpon>CourseMaterialsForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Dashboard.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -68,6 +92,12 @@
     </Compile>
     <Compile Include="Course.Designer.cs">
       <DependentUpon>Course.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Settings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Settings.Designer.cs">
+      <DependentUpon>Settings.cs</DependentUpon>
     </Compile>
     <Compile Include="ToDoList.cs">
       <SubType>Form</SubType>
@@ -101,6 +131,15 @@
     <Compile Include="SignUp.Designer.cs">
       <DependentUpon>SignUp.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="AddClass.resx">
+      <DependentUpon>AddClass.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ClassMaterials.resx">
+      <DependentUpon>ClassMaterials.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ClassRoutine.resx">
+      <DependentUpon>ClassRoutine.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Dashboard.resx">
       <DependentUpon>Dashboard.cs</DependentUpon>
     </EmbeddedResource>
@@ -112,6 +151,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="pomo.resx">
       <DependentUpon>pomo.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Settings.resx">
+      <DependentUpon>Settings.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ToDoList.resx">
       <DependentUpon>ToDoList.cs</DependentUpon>

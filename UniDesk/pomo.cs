@@ -1,42 +1,24 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Timers;
 
 namespace UniDesk
 {
     public partial class pomo : Form
     {
-        // Timer Variables
-        private System.Timers.Timer timer;
-        private int remainingSeconds;
-        private int totalSeconds;
-        private bool isRunning = false;
-        private bool isPaused = false;
-        private bool isWorkSession = true;
-
-
+        // ব্যাকগ্রাউন্ডে স্টেট ও সিস্টেম টাইম ধরে রাখার জন্য Static Variables
+        private static System.Windows.Forms.Timer bgTimer;
+        private static DateTime endTime;
+        private static int remainingSeconds = 25 * 60;
+        private static int totalSeconds = 25 * 60;
+        private static bool isRunning = false;
+        private static bool isPaused = false;
+        private static SessionType currentSession = SessionType.Work;
 
         // Session Durations (in seconds)
         private const int WORK_DURATION = 25 * 60;      // 25 minutes
         private const int SHORT_BREAK = 5 * 60;         // 5 minutes
         private const int LONG_BREAK = 15 * 60;         // 15 minutes
-
-        // UI Controls - declared but initialized in Designer
-        private System.Windows.Forms.Label lblTimer;
-        private System.Windows.Forms.Button Start_btn;
-        private System.Windows.Forms.Button Pause_btn;
-        private System.Windows.Forms.Button reset_btn;
-        private System.Windows.Forms.ProgressBar progressBar;
-
-        public pomo()
-        {
-            InitializeComponent();
-            InitializeTimer();
-            SetSession(SessionType.Work);
-
-        }
-
 
         private enum SessionType
         {
@@ -45,58 +27,78 @@ namespace UniDesk
             LongBreak
         }
 
-        private void InitializeTimer()
+        public pomo()
         {
-            timer = new System.Timers.Timer(1000); // 1 second interval
-            timer.SynchronizingObject = this;
-            timer.Elapsed += OnTick;
-            timer.AutoReset = true;
+            InitializeComponent();
+            EnsureGlobalTimer();
         }
 
-        private void OnTick(object sender, ElapsedEventArgs e)
+        private void EnsureGlobalTimer()
         {
-            if (isRunning && !isPaused)
+            if (bgTimer == null)
             {
-                if (remainingSeconds > 0)
-                {
-                    remainingSeconds--;
-                    UpdateTimerDisplay();
-                    UpdateProgressBar();
-                }
-                if (remainingSeconds <= 0)
-                {
-                    timer.Stop();
-                    isRunning = false;
-                    isPaused = false;
-
-                }
-                else
-                {
-                    lblTimer.ForeColor = isWorkSession
-                        ? Color.FromArgb(0,0,0)
-                        : Color.FromArgb(46, 204, 113);
-                }
-
+                bgTimer = new System.Windows.Forms.Timer();
+                bgTimer.Interval = 1000; // 1 second
+                bgTimer.Tick += GlobalTimer_Tick;
             }
         }
 
+        private static void GlobalTimer_Tick(object sender, EventArgs e)
+        {
+            if (isRunning && !isPaused)
+            {
+                // আসল ব্যাকগ্রাউন্ড টাইম ক্যালকুলেশন
+                TimeSpan remainingSpan = endTime - DateTime.Now;
+                remainingSeconds = (int)Math.Max(0, remainingSpan.TotalSeconds);
 
+                if (remainingSeconds <= 0)
+                {
+                    bgTimer.Stop();
+                    isRunning = false;
+                    isPaused = false;
+                    MessageBox.Show("Time's up!", "Pomodoro Timer", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+
+                // যদি pomo ফর্মটি বর্তমানে খোলা থাকে, তবে UI আপডেট হবে
+                if (Application.OpenForms["pomo"] is pomo activeForm && !activeForm.IsDisposed)
+                {
+                    activeForm.UpdateTimerDisplay();
+                    activeForm.UpdateProgressBar();
+                }
+            }
+        }
+
+        private void Form_Load(object sender, EventArgs e)
+        {
+            // ফর্মে ফিরে আসলে বর্তমান সময় অনুযায়ী রিফ্রেশ
+            if (isRunning && !isPaused)
+            {
+                TimeSpan remainingSpan = endTime - DateTime.Now;
+                remainingSeconds = (int)Math.Max(0, remainingSpan.TotalSeconds);
+            }
+
+            UpdateUIState();
+            UpdateTimerDisplay();
+            UpdateProgressBar();
+        }
 
         private void UpdateTimerDisplay()
         {
             TimeSpan time = TimeSpan.FromSeconds(remainingSeconds);
             lblTimer.Text = string.Format("{0:D2}:{1:D2}", time.Minutes, time.Seconds);
 
-            // Change color based on remaining time
-            if (remainingSeconds <= 60) // Last minute
+            if (remainingSeconds <= 60)
             {
-                lblTimer.ForeColor = Color.Red;
+                lblTimer.ForeColor = Color.FromArgb(231, 76, 60); // Red
             }
-            else if (remainingSeconds <= 300) // Last 5 minutes
+            else if (remainingSeconds <= 300)
             {
-                lblTimer.ForeColor = Color.Orange;
+                lblTimer.ForeColor = Color.FromArgb(241, 196, 15); // Orange/Yellow
             }
-            
+            else
+            {
+                lblTimer.ForeColor = Color.White;
+            }
         }
 
         private void UpdateProgressBar()
@@ -104,47 +106,53 @@ namespace UniDesk
             if (totalSeconds > 0)
             {
                 int progress = (int)((double)(totalSeconds - remainingSeconds) / totalSeconds * 100);
-                progressBar.Value = Math.Min(progress, 100);
+                progressBar.Value = Math.Min(Math.Max(progress, 0), 100);
             }
         }
 
-
-
+        private void UpdateUIState()
+        {
+            if (isRunning)
+            {
+                Start_btn.Enabled = false;
+                Pause_btn.Enabled = true;
+                Pause_btn.Text = isPaused ? "Resume" : "Pause";
+            }
+            else
+            {
+                Start_btn.Enabled = true;
+                Pause_btn.Enabled = false;
+                Pause_btn.Text = "Pause";
+            }
+        }
 
         private void ResetTimer()
         {
-            timer.Stop();
-
+            bgTimer.Stop();
             isRunning = false;
             isPaused = false;
             remainingSeconds = totalSeconds;
 
-            Start_btn.Enabled = true;
-            Pause_btn.Enabled = false;
-            Pause_btn.Text = "Pause";
-
+            UpdateUIState();
             UpdateTimerDisplay();
             UpdateProgressBar();
         }
 
-
         private void SetSession(SessionType sessionType)
         {
-            timer.Stop();
-
+            bgTimer.Stop();
             isRunning = false;
             isPaused = false;
+            currentSession = sessionType;
 
             switch (sessionType)
             {
                 case SessionType.Work:
                     totalSeconds = WORK_DURATION;
                     break;
-
                 case SessionType.ShortBreak:
                     totalSeconds = SHORT_BREAK;
                     break;
-
                 case SessionType.LongBreak:
                     totalSeconds = LONG_BREAK;
                     break;
@@ -152,17 +160,11 @@ namespace UniDesk
 
             remainingSeconds = totalSeconds;
 
-            Start_btn.Enabled = true;
-            Pause_btn.Enabled = false;
-            Pause_btn.Text = "Pause";
-
+            UpdateUIState();
             UpdateTimerDisplay();
             UpdateProgressBar();
         }
 
-
-
-        // Button Click Events
         private void BtnStart_Click(object sender, EventArgs e)
         {
             if (remainingSeconds <= 0)
@@ -173,14 +175,12 @@ namespace UniDesk
             isRunning = true;
             isPaused = false;
 
-            timer.Start();
+            // টাইমার শুরুর সাথে সাথে Target End Time নির্ধারণ
+            endTime = DateTime.Now.AddSeconds(remainingSeconds);
 
-            Start_btn.Enabled = false;
-            Pause_btn.Enabled = true;
-            Pause_btn.Text = "Pause";
+            bgTimer.Start();
+            UpdateUIState();
         }
-
-        
 
         private void BtnPause_Click(object sender, EventArgs e)
         {
@@ -190,28 +190,22 @@ namespace UniDesk
             if (!isPaused)
             {
                 isPaused = true;
-                timer.Stop();
-
-                Pause_btn.Text = "Resume";
-                Start_btn.Enabled = false;
+                bgTimer.Stop();
             }
             else
             {
                 isPaused = false;
-                timer.Start();
-
-                Pause_btn.Text = "Pause";
-                Start_btn.Enabled = false;
+                // রেজিউম করার সময় নতুন করে Target End Time আপডেট করা
+                endTime = DateTime.Now.AddSeconds(remainingSeconds);
+                bgTimer.Start();
             }
 
+            UpdateUIState();
         }
-
-
 
         private void BtnReset_Click(object sender, EventArgs e)
         {
             ResetTimer();
-
         }
 
         private void ChangeSessionWithConfirmation(SessionType sessionType)
@@ -231,96 +225,29 @@ namespace UniDesk
             SetSession(sessionType);
         }
 
-
-
-        private void Form_Load(object sender, EventArgs e)
+        private void Form_FormClosing(object sender, FormClosingEventArgs e)
         {
-            SetSession(SessionType.Work);
-
-        }
-
-        private void Form_FormClosing(
-            object sender,
-            FormClosingEventArgs e)
-        {
-            if (timer != null)
-            {
-                timer.Stop();
-                timer.Elapsed -= OnTick;
-                timer.Dispose();
-            }
-        }
-
-       
-
-        private void timer1_Tick(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label3_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label8_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label4_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label5_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void panel3_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
-        private void pictureBox1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label7_Click(object sender, EventArgs e)
-        {
-
+            // পেজ পরিবর্তন করলেও যেন ব্যাকগ্রাউন্ড টাইমার কন্টিনিউ হয়
         }
 
         private void focus_btn_Click(object sender, EventArgs e)
         {
             ChangeSessionWithConfirmation(SessionType.Work);
-
         }
 
         private void shortBreak_btn_Click(object sender, EventArgs e)
         {
             ChangeSessionWithConfirmation(SessionType.ShortBreak);
-
         }
 
         private void longBreak_btn_Click(object sender, EventArgs e)
         {
             ChangeSessionWithConfirmation(SessionType.LongBreak);
-
         }
 
-        private void lblTimer_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label2_Click(object sender, EventArgs e)
-        {
-
-        }
+        private void lblTimer_Click(object sender, EventArgs e) { }
+        private void label2_Click(object sender, EventArgs e) { }
+        private void panel2_Paint(object sender, PaintEventArgs e) { }
+        private void monthCalendar1_DateChanged(object sender, DateRangeEventArgs e) { }
     }
-
-
 }
